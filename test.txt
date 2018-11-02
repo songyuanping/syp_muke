@@ -1,1 +1,1 @@
-git repo2
+第一天需求完成bash_demo。
