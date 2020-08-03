@@ -30,8 +30,11 @@ print('batch: ', sample[0].shape, sample[1].shape)
 
 model = Sequential([
     layers.Dense(256, activation=tf.nn.relu),
+    layers.Dropout(0.5),
     layers.Dense(128, activation=tf.nn.relu),
+    layers.Dropout(0.5),
     layers.Dense(64, activation=tf.nn.relu),
+    layers.Dropout(0.5),
     layers.Dense(32, activation=tf.nn.relu),
     layers.Dense(10)
 ])

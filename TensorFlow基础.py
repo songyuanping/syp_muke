@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from tensorflow import keras
+from tensorflow.keras import datasets, layers, optimizers, Sequential, metrics
 
 if __name__ == '__main__':
     x = tf.constant(1.2)
@@ -310,7 +312,77 @@ if __name__ == '__main__':
     xx=tf.nn.conv2d_transpose(out,w,strides=2,padding='VALID',output_shape=[1,5,5,1])
     print(xx)
 
+    x=tf.range(16)+1
+    x=tf.reshape(x,[1,4,4,1])
+    x=tf.cast(x,tf.float32)
+    w=tf.constant([[-1,2,-3.],[4,-5,6],[-7,8,-9]])
+    w=tf.expand_dims(w,axis=2)
+    w=tf.expand_dims(w,axis=3)
+    out=tf.nn.conv2d(x,w,strides=1,padding='VALID')
+    print(out)
+    xx=tf.nn.conv2d_transpose(out,w,strides=1,padding='VALID',output_shape=[1,4,4,1])
+    xx=tf.squeeze(xx)
+    layer=tf.keras.layers.Conv2DTranspose(1,kernel_size=3,strides=1,padding='VALID')
+    x1=layer(out)
+    print(xx)
+    print(x1)
+    x=tf.random.normal([2,28,28,4])
+    pool=layers.MaxPool2D(2,strides=2)
+    out=pool(x)
 
+    print(out.shape)
+    pool=layers.MaxPool2D(3,strides=2)
+    out=pool(x)
+    print(pool.trainable_variables)
+    print(out.shape)
+    out=tf.nn.max_pool2d(x,2,strides=2,padding='VALID')
+    print(out.shape)
+    layer=layers.UpSampling2D(size=2)
+    out=layer(x)
+    print(out.shape)
+    cell=layers.SimpleRNNCell(3)
+    cell.build(input_shape=[None,4])
+    print(cell.trainable_variables)
+
+    h0=[tf.zeros([4,64])]
+    x=tf.random.normal([4,80,100])
+    xt=x[:,0,:]
+    print(xt.shape)
+    cell=layers.SimpleRNNCell(64)
+    out,h1=cell(xt,h0)
+    print(out.shape,h1[0].shape)
+    print(id(out),id(h1[0]))
+    h=h0
+    for xt in tf.unstack(x,axis=1):
+        out,h=cell(xt,h)
+    print(out)
+
+    x=tf.random.normal([4,80,100])
+    # 取第一个时间戳的输入
+    xt=x[:,0,:]
+    cell0=layers.SimpleRNNCell(64)
+    cell1=layers.SimpleRNNCell(64)
+    h0=[tf.zeros([4,64])]
+    h1=[tf.zeros([4,64])]
+    for xt in tf.unstack(x,axis=1):
+        out0,h0=cell0(xt,h0)
+        out1,h1=cell1(out0,h1)
+    print(cell0.trainable_variables)
+    print(out1,h1)
+
+    layer=layers.SimpleRNN(64)
+    out=layer(x)
+    print(out)
+    layer=layers.SimpleRNN(64,return_sequences=True)
+    out=layer(x)
+    print(out.shape)
+    # 除最末层外，都需要返回所有时间戳的输出
+    net=Sequential([
+        layers.SimpleRNN(64,return_sequences=True),
+                    layers.SimpleRNN(64,return_sequences=True),
+                    layers.SimpleRNN(64)])
+    out=net(x)
+    print(out)
 
 
 
