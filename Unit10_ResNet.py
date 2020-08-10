@@ -51,10 +51,10 @@ class ResNet(keras.Model):
                                 ])
         self.layer1 = self.build_resblock(64, layers_dims[0])
         self.layer2 = self.build_resblock(128, layers_dims[1], stride=2)
-        self.layer3 = self.build_resblock(156, layers_dims[2], stride=2)
+        self.layer3 = self.build_resblock(256, layers_dims[2], stride=2)
         self.layer4 = self.build_resblock(512, layers_dims[3], stride=2)
 
-        # output: [b,512,h,w]
+        # 将 [b,512,h,w]的后两个维度加和取均值，变成[b,512,1,1]的维度
         self.avgpool = layers.GlobalAvgPool2D()
         self.fc = layers.Dense(num_classes)
 
@@ -66,7 +66,7 @@ class ResNet(keras.Model):
         x = self.layer3(x, training=training)
         x = self.layer4(x, training=training)
 
-        # 输出[b,c]
+        # 输出[b,channel]
         x = self.avgpool(x)
         # 输出[b,num_classes]
         x = self.fc(x)
@@ -74,6 +74,7 @@ class ResNet(keras.Model):
 
     def build_resblock(self, filter_num, blocks, stride=1):
         res_blocks = Sequential()
+        # 可能有下采样层，只采样一次
         res_blocks.add(BasicBlock(filter_num, stride))
         for i in range(blocks):
             res_blocks.add(BasicBlock(filter_num, stride=1))

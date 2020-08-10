@@ -17,7 +17,7 @@ print(x.shape, y.shape)
 # y = tf.one_hot(y, depth=10)
 # y_val = tf.one_hot(y_val, depth=10)
 
-batchSize = 128
+batchSize = 256
 ds = tf.data.Dataset.from_tensor_slices((x, y))
 ds = ds.map(prepare_mnist_features_and_labels)
 ds = ds.shuffle(60000).batch(batchSize)
@@ -29,25 +29,26 @@ sample = next(ds_iter)
 print('batch: ', sample[0].shape, sample[1].shape)
 
 model = Sequential([
+    layers.Dense(512, activation=tf.nn.relu),
     layers.Dense(256, activation=tf.nn.relu),
-    layers.Dropout(0.5),
+    layers.Dropout(0.25),
     layers.Dense(128, activation=tf.nn.relu),
-    layers.Dropout(0.5),
+    layers.Dropout(0.25),
     layers.Dense(64, activation=tf.nn.relu),
-    layers.Dropout(0.5),
+    layers.Dropout(0.25),
     layers.Dense(32, activation=tf.nn.relu),
     layers.Dense(10)
 ])
 model.build(input_shape=[None, 28 * 28])
 model.summary()
 # w=w-lr*grad
-optimizer = optimizers.Adam(lr=1e-3)
 
 
 # return ds, ds_val
 
 def main():
-    for epoch in range(30):
+    for epoch in range(60):
+        optimizer = optimizers.Adam(lr=0.002*(1-tf.cast(epoch,tf.float32)/60.))
         for step, (x, y) in enumerate(ds):
             # x:[b,28,28] => [b,784]
             # y:[b]

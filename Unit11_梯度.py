@@ -60,6 +60,10 @@ net = Sequential([layers.GRU(64, return_sequences=True),
                   layers.GRU(64)])
 out = net(x)
 print(out.shape)
+
+# 梯度裁剪防止梯度爆炸
+# grads=[tf.clip_by_global_norm(g,15) for g in grads]
+
 x=tf.random.normal([2,4,4,3],mean=1,stddev=0.5)
 net=layers.BatchNormalization(axis=-1)
 out=net(x)
@@ -69,3 +73,17 @@ print(net.variables)
 for i in range(100):
     out=net(x,training=True)
 print(net.variables)
+
+w1=tf.random.normal([3,3])
+w2=tf.random.normal([3,3])
+# 计算 global norm
+global_norm=tf.math.sqrt(tf.norm(w1)**2+tf.norm(w2)**2)
+# 根据global norm 和 max norm=4裁剪
+(ww1,ww2),global_norm=tf.clip_by_global_norm([w1,w2],2)
+# 计算裁剪后张量组的global norm
+global_norm2=tf.math.sqrt(tf.norm(ww1)**2+tf.norm(ww2)**2)
+print(global_norm,global_norm2)
+
+# 全局梯度裁剪，防止梯度爆炸
+# grads = tape.gradient(loss, model.trainable_variables)
+# grads, _ = tf.clip_by_global_norm(grads, 25)

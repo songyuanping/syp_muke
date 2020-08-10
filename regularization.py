@@ -44,6 +44,8 @@ for epoch in range(100):
             loss = loss + 0.0001 * loss_regularization
 
         grads = tape.gradient(loss, network.trainable_variables)
+        # 梯度裁剪防止梯度爆炸
+        grads=[tf.clip_by_norm(g,15) for g in grads]
         optimizer.apply_gradients(zip(grads, network.trainable_variables))
 
         if step % 10 == 0:

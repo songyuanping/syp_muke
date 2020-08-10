@@ -16,11 +16,12 @@ y = tf.squeeze(y, axis=1)
 y_test = tf.squeeze(y_test, axis=1)
 print(x.shape, y.shape, x_test.shape, y_test.shape)
 
+batchSize=16
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
-train_db = train_db.map(preprocess).shuffle(1000).batch(128)
+train_db = train_db.map(preprocess).shuffle(5*batchSize).batch(batchSize)
 
 test_db = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-test_db = test_db.map(preprocess).batch(128)
+test_db = test_db.map(preprocess).batch(batchSize)
 
 sample = next(iter(train_db))
 print(sample[0].shape, sample[1].shape, tf.reduce_min(sample[0]), tf.reduce_max(sample[0]))
@@ -28,7 +29,8 @@ print(sample[0].shape, sample[1].shape, tf.reduce_min(sample[0]), tf.reduce_max(
 
 def main():
     # [b,32,32,3]=>[b,1,1,512]
-    model = resnet18()
+    # model = resnet18()
+    model=resnet34()
     # input_shape应该使用元组
     model.build(input_shape=(None, 32, 32, 3))
     model.summary()
@@ -48,21 +50,21 @@ def main():
             if step % 50 == 0:
                 print('epoch:', epoch, 'step:', step, 'loss:', float(loss))
 
-        # if epoch % 10 == 9:
-        total_num, total_correct = 0., 0
-        for x, y in test_db:
-            logits = model(x, training=False)
-            prob = tf.nn.softmax(logits, axis=1)
-            pred = tf.argmax(prob, axis=1)
-            pred = tf.cast(pred, tf.int32)
+        if epoch % 10 == 9:
+            total_num, total_correct = 0., 0
+            for x, y in test_db:
+                logits = model(x, training=False)
+                prob = tf.nn.softmax(logits, axis=1)
+                pred = tf.argmax(prob, axis=1)
+                pred = tf.cast(pred, tf.int32)
 
-            correct = tf.reduce_sum(tf.cast(tf.equal(pred, y), tf.int32))
+                correct = tf.reduce_sum(tf.cast(tf.equal(pred, y), tf.int32))
 
-            total_num += x.shape[0]
-            total_correct += correct
+                total_num += x.shape[0]
+                total_correct += correct
 
-        acc = tf.cast(total_correct,tf.float32) / total_num
-        print('epoch:', epoch, "acc:", float(acc))
+            acc = tf.cast(total_correct,tf.float32) / total_num
+            print('epoch:', epoch, "acc:", float(acc))
 
 
 if __name__ == '__main__':

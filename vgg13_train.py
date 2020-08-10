@@ -40,7 +40,7 @@ batchSize = 128
 (x, y), (x_test, y_test) = datasets.cifar100.load_data()
 print(x.shape, y.shape, x_test.shape, y_test.shape)
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
-train_db = train_db.map(preprocess).shuffle(1000).batch(batchSize)
+train_db = train_db.map(preprocess).shuffle(5*batchSize).batch(batchSize)
 
 test_db = tf.data.Dataset.from_tensor_slices((x_test, y_test))
 test_db = test_db.map(preprocess).batch(batchSize)
@@ -50,9 +50,9 @@ print(sample[0].shape, sample[1].shape)
 
 def main():
     convNet = Sequential(conv_layers)
-    x = tf.random.normal([4, 32, 32, 3])
-    out = convNet(x)
-    print(out.shape)
+    # x = tf.random.normal([4, 32, 32, 3])
+    # out = convNet(x)
+    # print(out.shape)
     fc_net = Sequential([layers.Dense(256, activation=tf.nn.relu),
                          layers.Dense(128, activation=tf.nn.relu),
                          layers.Dense(100)
