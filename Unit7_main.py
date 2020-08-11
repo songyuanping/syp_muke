@@ -49,11 +49,12 @@ if __name__=='__main__':
     print(network.summary())
 
     # 设置测量指标为准确率
-    network.compile(optimizer=optimizers.Adam(0.01), loss=losses.CategoricalCrossentropy(from_logits=True),
+    network.compile(optimizer=optimizers.Adam(0.01),
+                    loss=losses.CategoricalCrossentropy(from_logits=True),
                     metrics=['accuracy'])
 
     resnet = keras.applications.ResNet50(weights='imagenet', include_top=False)
-    print(resnet.summary())
+    resnet.summary()
     x = tf.random.normal([4, 224, 224, 3])
     out = resnet(x)
     print('shape:', out.shape)
