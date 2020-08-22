@@ -78,13 +78,13 @@ def disk_image_batch_dataset(img_paths, batch_size, labels=None,
         return (img,) + label
 
     if map_fn:
-        def map_fn(*args):
+        def map_fn_(*args):
             return map_fn(*parse_fn(*args))
     else:
-        map_fn = parse_fn
+        map_fn_ = parse_fn
 
     dataset = memory_data_batch_dataset(memory_data, batch_size, drop_remainder=drop_remainder,
-                                        n_prefetch_batch=n_prefetch_batch, filter_fn=filter_fn, map_fn=map_fn,
+                                        n_prefetch_batch=n_prefetch_batch, filter_fn=filter_fn, map_fn=map_fn_,
                                         n_map_threads=n_map_threads, filter_after_map=filter_after_map,
                                         shuffle=shuffle, shuffle_buffer_size=shuffle_buffer_size, repeat=repeat)
     return dataset

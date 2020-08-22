@@ -17,12 +17,12 @@ def preprocess(x, y):
     return x, y
 
 
-batchsz = 128
+batchsz = 250
 (x, y), (x_val, y_val) = datasets.mnist.load_data()
 print('datasets:', x.shape, y.shape, x.min(), x.max())
 
 db = tf.data.Dataset.from_tensor_slices((x, y))
-db = db.map(preprocess).shuffle(60000).batch(batchsz)
+db = db.map(preprocess).shuffle(batchsz*5).batch(batchsz)
 ds_val = tf.data.Dataset.from_tensor_slices((x_val, y_val))
 ds_val = ds_val.map(preprocess).batch(batchsz)
 

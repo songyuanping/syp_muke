@@ -16,7 +16,7 @@ y = tf.squeeze(y, axis=1)
 y_test = tf.squeeze(y_test, axis=1)
 print(x.shape, y.shape, x_test.shape, y_test.shape)
 
-batchSize=16
+batchSize=80
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
 train_db = train_db.map(preprocess).shuffle(5*batchSize).batch(batchSize)
 
@@ -29,8 +29,8 @@ print(sample[0].shape, sample[1].shape, tf.reduce_min(sample[0]), tf.reduce_max(
 
 def main():
     # [b,32,32,3]=>[b,1,1,512]
-    # model = resnet18()
-    model=resnet34()
+    model = resnet18()
+    # model=resnet34()
     # input_shape应该使用元组
     model.build(input_shape=(None, 32, 32, 3))
     model.summary()
@@ -47,10 +47,10 @@ def main():
             grads = tape.gradient(loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
-            if step % 50 == 0:
+            if step % 100 == 0:
                 print('epoch:', epoch, 'step:', step, 'loss:', float(loss))
 
-        if epoch % 10 == 9:
+        if epoch % 2 == 1:
             total_num, total_correct = 0., 0
             for x, y in test_db:
                 logits = model(x, training=False)

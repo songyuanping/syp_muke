@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow import keras
-from tensorflow.keras import experimental, losses, layers, optimizers, Sequential, metrics
+from tensorflow.keras import experimental, losses, layers, optimizers, Sequential, metrics,models
 
 
 class BasicBlock(layers.Layer):
@@ -39,7 +39,7 @@ class BasicBlock(layers.Layer):
         return out
 
 
-class ResNet(keras.Model):
+class ResNet(models.Model):
 
     def __init__(self, layers_dims, num_classes=100):
         super(ResNet, self).__init__()

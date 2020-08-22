@@ -46,7 +46,7 @@ if __name__=='__main__':
         layers.Dense(10, activation='relu'),
     ])
     network.build(input_shape=(None, 28 * 28))
-    print(network.summary())
+    network.summary()
 
     # 设置测量指标为准确率
     network.compile(optimizer=optimizers.Adam(0.01),

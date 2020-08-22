@@ -4,8 +4,8 @@ from tensorflow import keras
 from tensorflow.keras import layers, datasets, losses, optimizers, Sequential
 
 batchSize = 250
-total_words = 100000
-max_review_len = 300
+total_words = 90000
+max_review_len = 150
 embedding_len = 100
 (x_train, y_train), (x_test, y_test) = datasets.imdb.load_data(num_words=total_words)
 
@@ -51,9 +51,9 @@ def main():
     units = 64
     epochs = 5
     model = MyRNN(units)
-    model.compile(optimizer=optimizers.Adam(lr=0.001),
+    model.compile(optimizer=optimizers.Adam(lr=0.0005),
                   loss=losses.BinaryCrossentropy(),
-                  metrics=['accuracy'])
+                  metrics=['accuracy'], experimental_run_tf_function=False)
     model.fit(train_db, epochs=epochs, validation_data=test_db)
     model.evaluate(test_db)
 
