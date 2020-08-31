@@ -8,6 +8,10 @@ from Unit10_ResNet import resnet18,resnet34
 def preprocess(x, y):
     x = tf.cast(x, tf.float32) / 255 - 0.5
     y = tf.cast(y, tf.int32)
+
+    # 配合model.compile进行使用
+    y=tf.one_hot(y,depth=100)
+
     return x, y
 
 
@@ -16,7 +20,7 @@ y = tf.squeeze(y, axis=1)
 y_test = tf.squeeze(y_test, axis=1)
 print(x.shape, y.shape, x_test.shape, y_test.shape)
 
-batchSize=80
+batchSize=125
 train_db = tf.data.Dataset.from_tensor_slices((x, y))
 train_db = train_db.map(preprocess).shuffle(5*batchSize).batch(batchSize)
 
@@ -68,4 +72,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+
+    model=resnet18()
+    model.compile(optimizer=optimizers.Adam(lr=1e-3),
+                  loss=losses.CategoricalCrossentropy(from_logits=True),
+                  metrics=['accuracy'])
+    model.fit(train_db,epochs=10,validation_data=test_db)
+    model.evaluate(test_db)
