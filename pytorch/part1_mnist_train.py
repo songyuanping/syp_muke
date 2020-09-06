@@ -44,7 +44,7 @@ class Net(nn.Module):
 
 
 net = Net()
-optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.1)
 train_loss = []
 for epoch in range(10):
     for batch_idx, (x, y) in enumerate(train_loader):

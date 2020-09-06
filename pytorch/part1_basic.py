@@ -241,3 +241,79 @@ out=F.interpolate(out,scale_factor=2,mode='nearest')
 print(out.shape)
 out=F.interpolate(x,scale_factor=3,mode='nearest')
 print(out.shape)
+x=torch.rand(100,16,784)
+# 对每个通道进行计算均值和方差
+layer=nn.BatchNorm1d(16)
+out=layer(x)
+print(layer.running_mean)
+print(layer.running_var)
+x=torch.rand(1,16,7,7)
+layer=nn.BatchNorm2d(16)
+out=layer(x)
+print(layer.weight)
+print(vars(layer))
+print(layer.eval())
+net=nn.Sequential(nn.Linear(4,2),nn.Linear(2,2))
+# w的定义为输出维度在前L0.w
+print(list(net.parameters())[0].shape)
+# L1.bias
+print(list(net.parameters())[3].shape)
+print(list(net.named_parameters())[0])
+print(dict(net.named_parameters()).items())
+rnn=nn.RNN(100,10)
+print(rnn._parameters.keys())
+print(rnn.weight_hh_l0.shape,rnn.weight_ih_l0.shape)
+print(rnn.bias_hh_l0.shape,rnn.bias_ih_l0.shape)
+rnn=nn.RNN(input_size=100,hidden_size=20,num_layers=1)
+print(rnn)
+# [wordslen,batch,wordvec]
+x=torch.rand(10,3,100)
+# out[t,b,features] 为每个时间戳上的输出，h[num_layers,b,features]为最后一个时间戳上的输出
+out,h=rnn(x,torch.zeros(1,3,20))
+print(out.shape,h.shape)
+rnn=nn.RNN(100,10,num_layers=2)
+print(rnn._parameters.keys())
+print(rnn.weight_hh_l0.shape,rnn.weight_ih_l0.shape)
+print(rnn.weight_hh_l1.shape,rnn.weight_ih_l1.shape)
+rnn=nn.RNN(input_size=100,hidden_size=20,num_layers=4)
+print(rnn)
+x=torch.randn(10,3,100)
+out,h=rnn(x)
+# h:[4,3,20]
+print(out.shape,h.shape)
+cell1=nn.RNNCell(100,30)
+cell2=nn.RNNCell(30,20)
+h1=torch.zeros(3,30)
+h2=torch.zeros(3,20)
+for xt in x:
+    h1=cell1(xt,h1)
+    h2=cell2(h1,h2)
+print(h2.shape)
+lstm=nn.LSTM(input_size=100,hidden_size=20,num_layers=4)
+print(lstm)
+x=torch.rand(10,3,100)
+out,(h,c)=lstm(x)
+# out:[seq_len,b,20],h,c:[num_layers,b,20]
+print(out.shape,h.shape,c.shape)
+cell1=nn.LSTMCell(input_size=100,hidden_size=30)
+cell2=nn.LSTMCell(input_size=30,hidden_size=20)
+h1=torch.zeros(3,30)
+c1=torch.zeros(3,30)
+h2=torch.zeros(3,20)
+c2=torch.zeros(3,20)
+for xt in x:
+    h1,c1=cell1(xt,[h1,c1])
+    h2,c2=cell2(h1,[h2,c2])
+print(h2.shape,c2.shape)
+
+
+
+
+
+
+
+
+
+
+
+
